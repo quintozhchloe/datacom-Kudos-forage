@@ -23,7 +23,7 @@ public class KudosApiFactory : WebApplicationFactory<Program>
             {
                 ["Mongo:ConnectionString"] = _mongo.ConnectionString,
                 ["Mongo:Database"] = "kudos-tests",
-                ["Kudos:DryRun"] = "true"
+                ["Kudos:DryRun"] = "false"
             };
 
             config.AddInMemoryCollection(settings);
@@ -37,5 +37,23 @@ public class KudosApiFactory : WebApplicationFactory<Program>
         {
             _mongo.Dispose();
         }
+    }
+}
+
+public class KudosApiDryRunFactory : KudosApiFactory
+{
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        base.ConfigureWebHost(builder);
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            var settings = new Dictionary<string, string?>
+            {
+                ["Mongo:Database"] = "kudos-tests-dryrun",
+                ["Kudos:DryRun"] = "true"
+            };
+
+            config.AddInMemoryCollection(settings);
+        });
     }
 }

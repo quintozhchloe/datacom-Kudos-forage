@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import { loginRequest } from './authConfig.js';
+import { useAuth } from 'react-oidc-context';
 
 const emptyForm = {
   toUserId: '',
@@ -15,8 +14,12 @@ const defaultFilters = {
 const PAGE_SIZE = 8;
 
 export default function App() {
-  const { instance, accounts } = useMsal();
-  const account = accounts[0];
+  const auth = useAuth();
+  const account = auth.user?.profile;
+  const roles = account?.roles || account?.role || account?.['cognito:groups'] || [];
+  const isAdmin = Array.isArray(roles)
+    ? roles.some((role) => ['KudosAdmin', 'Admin'].includes(role))
+    : ['KudosAdmin', 'Admin'].includes(roles);
 
   const [users, setUsers] = useState([]);
   const [kudos, setKudos] = useState([]);
@@ -30,23 +33,11 @@ export default function App() {
   const [loadingKudos, setLoadingKudos] = useState(true);
 
   async function getAccessToken() {
-    if (!account) {
+    if (!auth.user) {
       return null;
     }
 
-    try {
-      const response = await instance.acquireTokenSilent({
-        ...loginRequest,
-        account
-      });
-      return response.accessToken;
-    } catch (error) {
-      const response = await instance.acquireTokenPopup({
-        ...loginRequest,
-        account
-      });
-      return response.accessToken;
-    }
+    return auth.user.access_token;
   }
 
   async function authorizedFetch(url, options = {}) {
@@ -65,7 +56,7 @@ export default function App() {
     let active = true;
 
     async function loadUsers() {
-      if (!account) {
+      if (!auth.isAuthenticated) {
         return;
       }
 
@@ -101,9 +92,9 @@ export default function App() {
     let active = true;
 
     async function loadKudos() {
-      if (!account) {
-        return;
-      }
+        if (!auth.isAuthenticated) {
+          return;
+        }
 
       try {
         setLoadingKudos(true);
@@ -163,7 +154,7 @@ export default function App() {
     event.preventDefault();
     setStatus({ type: 'idle', text: '' });
 
-    if (!account) {
+    if (!auth.isAuthenticated) {
       setStatus({ type: 'error', text: 'Please sign in before sending kudos.' });
       return;
     }
@@ -199,6 +190,53 @@ export default function App() {
     }
   }
 
+  async function handleModeration(id, makeVisible) {
+    const reason = window.prompt(
+      makeVisible ? 'Optional reason for restoring visibility:' : 'Reason for hiding this kudos:'
+    );
+
+    try {
+      const response = await authorizedFetch(`/api/kudos/${id}/visibility`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          isVisible: makeVisible,
+          reason: reason || ''
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Moderation failed');
+      }
+
+      setRefreshToken((prev) => prev + 1);
+    } catch (error) {
+      setStatus({ type: 'error', text: 'Could not update moderation status.' });
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm('Delete this kudos permanently?')) {
+      return;
+    }
+
+    try {
+      const response = await authorizedFetch(`/api/kudos/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Delete failed');
+      }
+
+      setRefreshToken((prev) => prev + 1);
+    } catch (error) {
+      setStatus({ type: 'error', text: 'Could not delete kudos.' });
+    }
+  }
+
   function handleTeamFilter(value) {
     setPage(1);
     setFilters((prev) => ({ ...prev, team: value }));
@@ -210,11 +248,11 @@ export default function App() {
   }
 
   function handleLogin() {
-    instance.loginPopup(loginRequest);
+    auth.signinRedirect();
   }
 
   function handleLogout() {
-    instance.logoutPopup();
+    auth.signoutRedirect();
   }
 
   return (
@@ -229,18 +267,20 @@ export default function App() {
       </header>
 
       <section className="card auth-card">
-        <AuthenticatedTemplate>
+        {auth.isAuthenticated ? (
           <div className="auth-row">
             <div>
               <h2>Signed in</h2>
-              <p className="card-subtitle">{account?.name}</p>
+              <p className="card-subtitle">
+                {account?.name || account?.preferred_username}
+                {isAdmin ? ' · Admin' : ''}
+              </p>
             </div>
             <button type="button" className="ghost" onClick={handleLogout}>
               Sign out
             </button>
           </div>
-        </AuthenticatedTemplate>
-        <UnauthenticatedTemplate>
+        ) : (
           <div className="auth-row">
             <div>
               <h2>Sign in to continue</h2>
@@ -250,10 +290,10 @@ export default function App() {
               Sign in
             </button>
           </div>
-        </UnauthenticatedTemplate>
+        )}
       </section>
 
-      <AuthenticatedTemplate>
+      {auth.isAuthenticated && (
         <section className="card form-card">
           <div className="form-header">
             <div>
@@ -347,7 +387,7 @@ export default function App() {
           ) : (
             <div className="feed">
               {kudos.map((item) => (
-                <article key={item.id} className="kudos">
+                <article key={item.id} className={`kudos ${item.isVisible ? '' : 'hidden'}`}>
                   <div>
                     <p className="kudos-title">
                       <span>{item.toUserName}</span>
@@ -357,7 +397,28 @@ export default function App() {
                     <p className="kudos-meta">
                       From {item.fromUserName} · {new Date(item.createdAt).toLocaleString()}
                     </p>
+                    {item.isVisible === false && (
+                      <p className="kudos-flag">Hidden by moderation</p>
+                    )}
                   </div>
+                  {isAdmin && (
+                    <div className="kudos-actions">
+                      <button
+                        type="button"
+                        className="ghost"
+                        onClick={() => handleModeration(item.id, !item.isVisible)}
+                      >
+                        {item.isVisible ? 'Hide' : 'Show'}
+                      </button>
+                      <button
+                        type="button"
+                        className="ghost danger"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
@@ -382,7 +443,7 @@ export default function App() {
             </button>
           </div>
         </section>
-      </AuthenticatedTemplate>
+      )}
     </div>
   );
 }

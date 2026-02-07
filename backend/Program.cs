@@ -35,20 +35,20 @@ else
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer(options =>
-        {
-            var azureAd = builder.Configuration.GetSection("AzureAd");
-            var instance = azureAd.GetValue<string>("Instance");
-            var tenantId = azureAd.GetValue<string>("TenantId");
-            var audience = azureAd.GetValue<string>("Audience");
+    .AddJwtBearer(options =>
+    {
+        var cognito = builder.Configuration.GetSection("Cognito");
+        var region = cognito.GetValue<string>("Region");
+        var userPoolId = cognito.GetValue<string>("UserPoolId");
+        var clientId = cognito.GetValue<string>("ClientId");
 
-            options.Authority = $"{instance}{tenantId}/v2.0";
-            options.Audience = audience;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true
-            };
-        });
+        options.Authority = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
+        options.Audience = clientId;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true
+        };
+    });
 }
 
 builder.Services.AddAuthorization();
@@ -94,6 +94,7 @@ apiGroup.MapGet("/users", async (MongoContext context) =>
 apiGroup.MapGet("/kudos", async (
     MongoContext context,
     IOptions<KudosOptions> options,
+    ClaimsPrincipal userPrincipal,
     int? page,
     int? pageSize,
     string? team,
@@ -105,6 +106,7 @@ apiGroup.MapGet("/kudos", async (
     var size = Math.Clamp(pageSize ?? 12, 1, 100);
 
     var filter = Builders<KudosModel>.Filter.Empty;
+    var isAdmin = IsAdmin(userPrincipal);
 
     if (!string.IsNullOrWhiteSpace(team))
     {
@@ -119,6 +121,11 @@ apiGroup.MapGet("/kudos", async (
     if (!string.IsNullOrWhiteSpace(fromUserId))
     {
         filter &= Builders<KudosModel>.Filter.Eq(k => k.FromUserId, fromUserId);
+    }
+
+    if (!isAdmin)
+    {
+        filter &= Builders<KudosModel>.Filter.Eq(k => k.IsVisible, true);
     }
 
     if (!string.IsNullOrWhiteSpace(search))
@@ -159,7 +166,11 @@ apiGroup.MapGet("/kudos", async (
             fromUserName = entry.FromUserName,
             fromUserTeam = entry.FromUserTeam,
             message = entry.Message,
-            createdAt = entry.CreatedAt
+            createdAt = entry.CreatedAt,
+            isVisible = entry.IsVisible,
+            moderatedBy = entry.ModeratedBy,
+            moderatedAt = entry.ModeratedAt,
+            moderationReason = entry.ModerationReason
         })
     });
 });
@@ -181,9 +192,7 @@ apiGroup.MapPost("/kudos", async (
         return Results.BadRequest(new { error = "Message must be 240 characters or less." });
     }
 
-    var externalId = userPrincipal.FindFirstValue("oid") ??
-        userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ??
-        userPrincipal.FindFirstValue("sub");
+    var externalId = GetExternalId(userPrincipal);
 
     if (string.IsNullOrWhiteSpace(externalId))
     {
@@ -240,7 +249,8 @@ apiGroup.MapPost("/kudos", async (
         FromUserName = string.IsNullOrWhiteSpace(fromUser.Name) ? email : fromUser.Name,
         FromUserTeam = fromUser.Team,
         Message = request.Message.Trim(),
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = DateTime.UtcNow,
+        IsVisible = true
     };
 
     if (!isDryRun)
@@ -262,10 +272,108 @@ apiGroup.MapPost("/kudos", async (
         fromUserName = kudos.FromUserName,
         fromUserTeam = kudos.FromUserTeam,
         message = kudos.Message,
-        createdAt = kudos.CreatedAt
+        createdAt = kudos.CreatedAt,
+        isVisible = kudos.IsVisible,
+        moderatedBy = kudos.ModeratedBy,
+        moderatedAt = kudos.ModeratedAt,
+        moderationReason = kudos.ModerationReason
     });
 });
 
+apiGroup.MapPatch("/kudos/{id}/visibility", async (
+    string id,
+    KudosModerationRequest request,
+    ClaimsPrincipal userPrincipal,
+    MongoContext context,
+    IOptions<KudosOptions> options) =>
+{
+    if (!IsAdmin(userPrincipal))
+    {
+        return Results.Forbid();
+    }
+
+    var externalId = GetExternalId(userPrincipal);
+    if (string.IsNullOrWhiteSpace(externalId))
+    {
+        return Results.Unauthorized();
+    }
+
+    var kudos = await context.Kudos.Find(k => k.Id == id).FirstOrDefaultAsync();
+    if (kudos is null)
+    {
+        return Results.NotFound(new { error = "Kudos not found." });
+    }
+
+    var now = DateTime.UtcNow;
+    kudos.IsVisible = request.IsVisible;
+    kudos.ModeratedBy = externalId;
+    kudos.ModeratedAt = now;
+    kudos.ModerationReason = request.Reason;
+
+    if (!options.Value.DryRun)
+    {
+        var update = Builders<KudosModel>.Update
+            .Set(k => k.IsVisible, request.IsVisible)
+            .Set(k => k.ModeratedBy, externalId)
+            .Set(k => k.ModeratedAt, now)
+            .Set(k => k.ModerationReason, request.Reason);
+
+        await context.Kudos.UpdateOneAsync(k => k.Id == id, update);
+    }
+
+    return Results.Ok(new
+    {
+        id = kudos.Id,
+        isVisible = kudos.IsVisible,
+        moderatedBy = kudos.ModeratedBy,
+        moderatedAt = kudos.ModeratedAt,
+        moderationReason = kudos.ModerationReason,
+        dryRun = options.Value.DryRun
+    });
+});
+
+apiGroup.MapDelete("/kudos/{id}", async (
+    string id,
+    ClaimsPrincipal userPrincipal,
+    MongoContext context,
+    IOptions<KudosOptions> options) =>
+{
+    if (!IsAdmin(userPrincipal))
+    {
+        return Results.Forbid();
+    }
+
+    var existing = await context.Kudos.Find(k => k.Id == id).FirstOrDefaultAsync();
+    if (existing is null)
+    {
+        return Results.NotFound(new { error = "Kudos not found." });
+    }
+
+    if (!options.Value.DryRun)
+    {
+        await context.Kudos.DeleteOneAsync(k => k.Id == id);
+    }
+
+    return Results.Ok(new { id, deleted = true, dryRun = options.Value.DryRun });
+});
+
 app.Run("http://localhost:5000");
+
+static bool IsAdmin(ClaimsPrincipal user)
+{
+    var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value)
+        .Concat(user.FindAll("roles").Select(c => c.Value))
+        .Concat(user.FindAll("role").Select(c => c.Value))
+        .Concat(user.FindAll("cognito:groups").Select(c => c.Value));
+
+    return roles.Any(role =>
+        string.Equals(role, "KudosAdmin", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase));
+}
+
+static string? GetExternalId(ClaimsPrincipal user) =>
+    user.FindFirstValue("oid") ??
+    user.FindFirstValue(ClaimTypes.NameIdentifier) ??
+    user.FindFirstValue("sub");
 
 public partial class Program { }

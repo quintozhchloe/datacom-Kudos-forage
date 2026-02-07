@@ -974,30 +974,6 @@
           "Kudos.Api.dll": {}
         }
       },
-      "MongoDB.Driver.Core/2.25.0.0": {
-        "runtime": {
-          "MongoDB.Driver.Core.dll": {
-            "assemblyVersion": "2.25.0.0",
-            "fileVersion": "2.25.0.0"
-          }
-        }
-      },
-      "MongoDB.Libmongocrypt/1.8.2.0": {
-        "runtime": {
-          "MongoDB.Libmongocrypt.dll": {
-            "assemblyVersion": "1.8.2.0",
-            "fileVersion": "1.8.2.0"
-          }
-        }
-      },
-      "AWSSDK.Core/3.3.0.0": {
-        "runtime": {
-          "AWSSDK.Core.dll": {
-            "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.100.14"
-          }
-        }
-      },
       "Microsoft.AspNetCore.Antiforgery/8.0.0.0": {
         "compile": {
           "Microsoft.AspNetCore.Antiforgery.dll": {}
@@ -3301,21 +3277,6 @@
     },
     "Kudos.Api/1.0.0": {
       "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "MongoDB.Driver.Core/2.25.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "MongoDB.Libmongocrypt/1.8.2.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "AWSSDK.Core/3.3.0.0": {
-      "type": "reference",
       "serviceable": false,
       "sha512": ""
     },

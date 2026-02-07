@@ -120,9 +120,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "DnsClient": {
+              "target": "Package",
+              "version": "[1.6.1, )"
+            },
             "Microsoft.AspNetCore.Mvc.Testing": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.11.1, )"
             },
             "Mongo2Go": {
               "target": "Package",

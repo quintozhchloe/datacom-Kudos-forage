@@ -1,27 +1,25 @@
-import { LogLevel } from '@azure/msal-browser';
+const region = import.meta.env.VITE_COGNITO_REGION;
+const userPoolId = import.meta.env.VITE_COGNITO_USER_POOL_ID;
+const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
+const domain = import.meta.env.VITE_COGNITO_DOMAIN;
+const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI || window.location.origin;
 
-const tenantId = import.meta.env.VITE_AAD_TENANT_ID;
-const clientId = import.meta.env.VITE_AAD_CLIENT_ID;
-const redirectUri = import.meta.env.VITE_AAD_REDIRECT_URI || window.location.origin;
-const scope = import.meta.env.VITE_AAD_SCOPE || `api://${clientId}/user_impersonation`;
+const authority = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`;
 
-export const msalConfig = {
-  auth: {
-    clientId,
-    authority: `https://login.microsoftonline.com/${tenantId}`,
-    redirectUri
-  },
-  cache: {
-    cacheLocation: 'localStorage',
-    storeAuthStateInCookie: false
-  },
-  system: {
-    loggerOptions: {
-      logLevel: LogLevel.Warning
-    }
+export const oidcConfig = {
+  authority,
+  client_id: clientId,
+  redirect_uri: redirectUri,
+  response_type: 'code',
+  scope: 'openid profile email',
+  automaticSilentRenew: true,
+  loadUserInfo: true,
+  metadata: {
+    issuer: authority,
+    authorization_endpoint: `${domain}/oauth2/authorize`,
+    token_endpoint: `${domain}/oauth2/token`,
+    userinfo_endpoint: `${domain}/oauth2/userInfo`,
+    jwks_uri: `${authority}/.well-known/jwks.json`,
+    end_session_endpoint: `${domain}/logout`
   }
-};
-
-export const loginRequest = {
-  scopes: [scope]
 };

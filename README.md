@@ -4,16 +4,18 @@
 - Backend: `dotnet run --project backend/Kudos.Api.csproj`
 - Frontend: `cd frontend` then `npm install` and `npm run dev`
 
-## Azure AD (OAuth2 / OIDC)
+## AWS Cognito (OAuth2 / OIDC)
 Update backend config in `backend/appsettings.json`:
-- `AzureAd:TenantId`
-- `AzureAd:ClientId`
-- `AzureAd:Audience` (usually `api://<client-id>`)
+- `Cognito:Region`
+- `Cognito:UserPoolId`
+- `Cognito:ClientId`
 
 Update frontend env (copy `frontend/.env.example` to `frontend/.env`):
-- `VITE_AAD_TENANT_ID`
-- `VITE_AAD_CLIENT_ID`
-- `VITE_AAD_SCOPE` (e.g. `api://<client-id>/user_impersonation`)
+- `VITE_COGNITO_REGION`
+- `VITE_COGNITO_USER_POOL_ID`
+- `VITE_COGNITO_CLIENT_ID`
+- `VITE_COGNITO_DOMAIN`
+- `VITE_COGNITO_REDIRECT_URI`
 
 ## API
 - `GET /api/users` (auth required)

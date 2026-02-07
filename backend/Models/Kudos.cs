@@ -34,4 +34,16 @@ public class Kudos
 
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; }
+
+    [BsonElement("isVisible")]
+    public bool IsVisible { get; set; } = true;
+
+    [BsonElement("moderatedBy")]
+    public string? ModeratedBy { get; set; }
+
+    [BsonElement("moderatedAt")]
+    public DateTime? ModeratedAt { get; set; }
+
+    [BsonElement("moderationReason")]
+    public string? ModerationReason { get; set; }
 }

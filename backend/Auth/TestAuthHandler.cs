@@ -40,6 +40,17 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
             new("preferred_username", email)
         };
 
+        if (Request.Headers.TryGetValue("X-Test-User-Roles", out var rolesHeader))
+        {
+            var roles = rolesHeader.ToString()
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim("roles", role));
+            }
+        }
+
         var identity = new ClaimsIdentity(claims, Scheme);
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, Scheme);
