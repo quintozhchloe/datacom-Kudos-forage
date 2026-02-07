@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Urbanist:wght@400;500;600&display=swap');
+
+:root {
+  font-family: 'Urbanist', system-ui, sans-serif;
+  color: #0f172a;
+  background: radial-gradient(circle at top left, #f8fafc 0%, #e2e8f0 40%, #f1f5f9 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1, h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0 0 0.5rem;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.eyebrow {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0 0 0.75rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: #475569;
+  max-width: 32rem;
+}
+
+.badge {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+}
+
+.card-subtitle {
+  margin-top: 0;
+  color: #64748b;
+}
+
+.auth-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-row {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.field.inline {
+  grid-template-columns: auto;
+  align-items: start;
+}
+
+select,
+textarea,
+input,
+button {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+select,
+textarea,
+input {
+  border-radius: 0.75rem;
+  border: 1px solid #cbd5f5;
+  padding: 0.85rem 0.95rem;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+button {
+  justify-self: start;
+  background: #0f172a;
+  color: #f8fafc;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+}
+
+.helper {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.hint {
+  margin: 1rem 0 0;
+  color: #475569;
+  font-weight: 600;
+}
+
+.status {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
+
+.status.success {
+  background: #ecfeff;
+  color: #0e7490;
+}
+
+.status.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.pill {
+  background: #e2e8f0;
+  color: #1e293b;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.feed {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.kudos {
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+}
+
+.kudos-title {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+}
+
+.kudos-team {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.kudos-message {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.kudos-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.muted {
+  color: #64748b;
+  margin: 1rem 0 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.ghost {
+  background: transparent;
+  border: 1px solid #cbd5f5;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+.ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 800px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+}

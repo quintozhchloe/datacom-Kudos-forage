@@ -1,0 +1,171 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.Tests/Kudos.Api.Tests.csproj": {}
+  },
+  "projects": {
+    "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.csproj",
+        "projectName": "Kudos.Api",
+        "projectPath": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.csproj",
+        "packagesPath": "/Users/huangchloe/.nuget/packages/",
+        "outputPath": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/huangchloe/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.25.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.Tests/Kudos.Api.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.Tests/Kudos.Api.Tests.csproj",
+        "projectName": "Kudos.Api.Tests",
+        "projectPath": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.Tests/Kudos.Api.Tests.csproj",
+        "packagesPath": "/Users/huangchloe/.nuget/packages/",
+        "outputPath": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.Tests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/huangchloe/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.csproj": {
+                "projectPath": "/Users/huangchloe/Desktop/DataCom/task2/KUDOS/backend/Kudos.Api.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "DnsClient": {
+              "target": "Package",
+              "version": "[1.6.1, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.11.1, )"
+            },
+            "Mongo2Go": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.6.6, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.5.6, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
