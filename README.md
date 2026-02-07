@@ -55,3 +55,8 @@ Writes are skipped for `POST /api/kudos` (returns `id: "dry-run"`).
 
 ## Tests
 - `dotnet test backend/Kudos.Api.Tests/Kudos.Api.Tests.csproj`
+
+## Preview
+<img width="2044" height="1758" alt="acb471b8962bdcb8427138dce5a04f4b" src="https://github.com/user-attachments/assets/d0fd32bc-3952-4aa5-bcb3-9c1dfb59ea3b" />
+<img width="2024" height="774" alt="ec2e04fe3e36aa97edb2b1f4ea44a7ea" src="https://github.com/user-attachments/assets/bda4db0c-ae6b-409f-b583-56a9aa81eb5c" />
+
