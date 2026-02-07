@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Kudos.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a30ef1dec3f1eff7a06ca72a84d50b3f89b611b1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f88031aa7bc598ff6a358d01a77018ae219985e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Kudos.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Kudos.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

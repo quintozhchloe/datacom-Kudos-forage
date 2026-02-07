@@ -77,14 +77,33 @@
 ### Frontend Components
 
 - `App`
-  - Auth wrapper (MSAL)
+  - Auth wrapper (OIDC via Cognito)
   - Kudos form
   - Feed with pagination and filters
   - Admin moderation controls in feed cards
 
+### Configuration
+
+Backend (`appsettings.json` or environment variables):
+- `Cognito:Region`
+- `Cognito:UserPoolId`
+- `Cognito:ClientId`
+- `Mongo:ConnectionString`
+- `Mongo:Database`
+
+Frontend (`frontend/.env`):
+- `VITE_COGNITO_REGION`
+- `VITE_COGNITO_USER_POOL_ID`
+- `VITE_COGNITO_CLIENT_ID`
+- `VITE_COGNITO_DOMAIN`
+- `VITE_COGNITO_REDIRECT_URI`
+
 ### Security Considerations
 
-- AWS Cognito OAuth2/OIDC JWT validation
+- AWS Cognito OAuth2/OIDC JWT validation (User Pool, Authorization Code flow)
+- No client secret for SPA clients
+- Role/group-based authorization for admin moderation (`KudosAdmin`/`Admin`)
+- Server-side filtering for hidden kudos
 - Role-based authorization for admin moderation endpoints
 - Input validation for message length and required fields
 - Server-side filtering to prevent hidden content exposure

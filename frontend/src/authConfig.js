@@ -11,7 +11,7 @@ export const oidcConfig = {
   client_id: clientId,
   redirect_uri: redirectUri,
   response_type: 'code',
-  scope: 'openid profile email',
+  scope: 'openid email',
   automaticSilentRenew: true,
   loadUserInfo: true,
   metadata: {

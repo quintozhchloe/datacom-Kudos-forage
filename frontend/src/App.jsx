@@ -294,7 +294,8 @@ export default function App() {
       </section>
 
       {auth.isAuthenticated && (
-        <section className="card form-card">
+        <>
+          <section className="card form-card">
           <div className="form-header">
             <div>
               <h2>Send Kudos</h2>
@@ -343,9 +344,9 @@ export default function App() {
           {status.text && (
             <div className={`status ${status.type}`}>{status.text}</div>
           )}
-        </section>
+          </section>
 
-        <section className="card feed-card">
+          <section className="card feed-card">
           <div className="feed-header">
             <div>
               <h2>Recent Kudos</h2>
@@ -442,7 +443,8 @@ export default function App() {
               Next
             </button>
           </div>
-        </section>
+          </section>
+        </>
       )}
     </div>
   );

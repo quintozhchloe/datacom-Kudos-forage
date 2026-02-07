@@ -71,6 +71,10 @@ app.UseAuthorization();
 
 var mongoContext = app.Services.GetRequiredService<MongoContext>();
 await SeedData.EnsureUsersAsync(mongoContext.Users);
+if (app.Environment.IsDevelopment())
+{
+    await SeedData.EnsureKudosAsync(mongoContext.Kudos, mongoContext.Users);
+}
 
 var apiGroup = app.MapGroup("/api");
 apiGroup.RequireAuthorization();
